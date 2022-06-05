@@ -1,13 +1,11 @@
 import Expression from '@/types/expression.type';
 
 class AproximationService {
-	expression: Expression;
+	expressions: Expression[];
 
-	public constructor(expression: Expression) {
-		this.expression = expression;
+	public constructor(expressions: Expression[]) {
+		this.expressions = expressions;
 	}
-
-    
 }
 
 export default AproximationService;

@@ -12,10 +12,16 @@
 					class="btn"
 					@click="$router.push('/calculator')"
 				>
-					<a-calculator-icon />&nbsp;Calculate
+					<a-calculator-icon />&nbsp;{{ $t('Calculate') }}
 				</a-button>
-				<a-button type="primary" shape="round" size="large" class="btn">
-					<a-info-icon />&nbsp;Instruction
+				<a-button
+					type="primary"
+					shape="round"
+					size="large"
+					class="btn"
+					@click="$router.push('/instruction')"
+				>
+					<a-info-icon />&nbsp;{{ $t('Instruction') }}
 				</a-button>
 			</a-space>
 		</a-row>
