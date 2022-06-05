@@ -1,15 +1,7 @@
 import Expression from '@/types/expression.type';
 
-class InterpolationService {
-	interpolatedExpression: Expression;
-	interpolatingExpression: Expression;
+const interpolationService =  {
+	interpolateFunction = () => {};
+} as const;
 
-	constructor(
-		interpolatedExpression: Expression,
-		interpolatingExpression: Expression
-	) {
-		this.interpolatedExpression = interpolatedExpression;
-		this.interpolatingExpression = interpolatingExpression;
-	}
-
-}
+export default interpolationService;

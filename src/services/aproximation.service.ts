@@ -1,11 +1,7 @@
 import Expression from '@/types/expression.type';
 
-class AproximationService {
-	expressions: Expression[];
+const aproximationService = {
+	aproximateFunction = () => {};
+} as const;
 
-	public constructor(expressions: Expression[]) {
-		this.expressions = expressions;
-	}
-}
-
-export default AproximationService;
+export default aproximationService;

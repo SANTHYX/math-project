@@ -1,5 +1,4 @@
 type Expression = {
-	id: number;
 	top: string;
 	bottom: string;
 };
