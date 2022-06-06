@@ -2,7 +2,9 @@
 	<a-layout>
 		<a-layout-content class="view">
 			<span class="escape-icon">
-				<a-arrow-left-icon />&nbsp;{{ $t('Back') }}
+				<a-arrow-left-icon @click="$router.push('/startPage')" />&nbsp;{{
+					$t('Back')
+				}}
 			</span>
 			<a-space>
 				<expression-displayer
@@ -34,7 +36,6 @@ export default defineComponent({
 	data: () => ({
 		expressions: [
 			{
-				id: 1,
 				top: '2x-2y',
 				bottom: 'x2+5y+24xy',
 			},
