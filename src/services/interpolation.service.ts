@@ -1,7 +1,7 @@
 import Point from '@/types/point.type';
 
 const interpolationService = {
-	findInterpolatingFunction: (x: number, points: Point[]) => {
+	interpolatePolynominal: (x: number, points: Point[]) => {
 		return points
 			.map((point, index) => {
 				let functions = 1;

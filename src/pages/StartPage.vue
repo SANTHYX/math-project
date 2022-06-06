@@ -60,7 +60,7 @@ export default defineComponent({
 				{ x: 5.5, y: 11.4 },
 				{ x: 6.1, y: 12 },
 			];
-			const result = interpolationService.findInterpolatingFunction(6.7, xd);
+			const result = interpolationService.interpolatePolynominal(6.7, xd);
 			console.log(result);
 		},
 	},
