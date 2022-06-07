@@ -1,10 +1,8 @@
 <template>
 	<a-layout>
 		<a-layout-content class="view">
-			<span class="escape-icon">
-				<a-arrow-left-icon @click="$router.push('/startPage')" />&nbsp;{{
-					$t('Back')
-				}}
+			<span class="escape-icon" @click="$router.push('/startPage')">
+				<a-arrow-left-icon />&nbsp;{{ $t('Back') }}
 			</span>
 			<a-space>
 				<expression-displayer
@@ -43,11 +41,11 @@ export default defineComponent({
 		result: 0 as number,
 	}),
 	methods: {
-		//interpolate(): void {},
+		//interpolate(): void {}, <-done
 		//aproximate(): void {},
 		//generateGraph(): void {},
 		//exportToExcel(): void {},
-		//
+		
 	},
 });
 </script>
@@ -61,6 +59,7 @@ export default defineComponent({
 		font-size: 20px;
 		color: black;
 		margin: 1rem;
+		cursor: pointer;
 	}
 }
 </style>

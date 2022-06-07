@@ -30,7 +30,7 @@
 					class="btn"
 					@click="interpolation"
 				>
-					Interpolate
+					<a-info-icon />&nbsp;{{ $t('xd') }}
 				</a-button>
 			</a-space>
 		</a-row>
@@ -41,7 +41,7 @@
 import { defineComponent } from 'vue';
 import { CalculatorOutlined, InfoCircleOutlined } from '@ant-design/icons-vue';
 import Logo from '../components/TheLogo.vue';
-import interpolationService from '@/services/interpolation.service';
+import aproximationService from '@/services/aproximation.service';
 import Point from '@/types/point.type';
 
 export default defineComponent({
@@ -52,16 +52,16 @@ export default defineComponent({
 		Logo,
 	},
 	methods: {
-		interpolation() {
-			const xd: Point[] = [
+		interpolation(): void {
+			const points: Point[] = [
 				{ x: 1, y: 2 },
 				{ x: 2, y: 3 },
 				{ x: 4, y: 11 },
 				{ x: 5.5, y: 11.4 },
 				{ x: 6.1, y: 12 },
 			];
-			const result = interpolationService.interpolatePolynominal(6.7, xd);
-			console.log(result);
+
+			console.log(aproximationService.aproximatePolinomoinal(points));
 		},
 	},
 });

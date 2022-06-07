@@ -6,7 +6,7 @@ const interpolationService = {
 			.map((point, index) => {
 				let functions = 1;
 				points
-					.filter((_, i) => i !== index)
+					.filter((_, innerIndex) => innerIndex !== index)
 					.forEach((obj) => {
 						functions *= (x - obj.x) / (point.x - obj.x);
 					});
