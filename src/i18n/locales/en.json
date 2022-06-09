@@ -1,5 +1,15 @@
 {
 	"Calculate": "Calcualte",
 	"Instruction": "Instruction",
-	"Back": "Back"
+	"Back": "Back",
+	"Interpolation": "Interpolation",
+	"Aproximation": "Aproksymacja",
+	"Add Points": "Add Points",
+	"Generate Chart": "Generate Chart",
+	"Create Report": "Create Report",
+	"Pass Points": "Pass Points",
+	"Overview": "Overview",
+	"Insert": "Insert",
+	"Pass X": "Pass X",
+	"Pass Y": "Pass Y"
 }

@@ -1,4 +1,3 @@
-import Expression from '@/types/expression.type';
 import Point from '@/types/point.type';
 
 const mathUtils = {
@@ -22,13 +21,13 @@ const mathUtils = {
 		return sum / base.length;
 	},
 
-	getMaxAE: (base: Point[], results: Point[]): number[] => {
+	getMaxAE: (base: Point[], results: Point[]): number => {
 		base.forEach((base, index) => {
 			if (base.x !== results[index].x) throw new Error('invalid operation');
 		});
 		return base
 			.map((base, index) => Math.abs(base.y - results[index].y))
-			.sort((a, b) => a - b);
+			.sort((a, b) => b - a)[0];
 	},
 } as const;
 

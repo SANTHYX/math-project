@@ -1,5 +1,15 @@
 {
 	"Calculate": "Licz",
 	"Instruction": "Instrukcja",
-	"Back": "Powrót"
+	"Back": "Powrót",
+	"Interpolation": "Interpolacja",
+	"Aproxiamtion": "Aproksymacja",
+	"Add Points": "Dodaj Punkty",
+	"Generate Chart": "Wygeneruj Wykres",
+	"Create Report": "Stwórz Raport",
+	"Pass Points": "Podaj Punkty",
+	"Overview": "Podgląd",
+	"Insert": "Wstaw",
+	"Pass X": "Podaj X",
+	"Pass Y": "Podaj Y"
 }

@@ -23,15 +23,6 @@
 				>
 					<a-info-icon />&nbsp;{{ $t('Instruction') }}
 				</a-button>
-				<a-button
-					type="primary"
-					shape="round"
-					size="large"
-					class="btn"
-					@click="interpolation"
-				>
-					<a-info-icon />&nbsp;{{ $t('xd') }}
-				</a-button>
 			</a-space>
 		</a-row>
 	</a-layout>
@@ -41,8 +32,6 @@
 import { defineComponent } from 'vue';
 import { CalculatorOutlined, InfoCircleOutlined } from '@ant-design/icons-vue';
 import Logo from '../components/TheLogo.vue';
-import aproximationService from '@/services/aproximation.service';
-import Point from '@/types/point.type';
 
 export default defineComponent({
 	name: 'StartPage',
@@ -50,19 +39,6 @@ export default defineComponent({
 		'a-calculator-icon': CalculatorOutlined,
 		'a-info-icon': InfoCircleOutlined,
 		Logo,
-	},
-	methods: {
-		interpolation(): void {
-			const points: Point[] = [
-				{ x: 1, y: 2 },
-				{ x: 2, y: 3 },
-				{ x: 4, y: 11 },
-				{ x: 5.5, y: 11.4 },
-				{ x: 6.1, y: 12 },
-			];
-
-			console.log(aproximationService.aproximatePolinomoinal(points));
-		},
 	},
 });
 </script>

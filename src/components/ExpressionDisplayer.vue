@@ -1,5 +1,5 @@
 <template>
-	<div></div>
+	<a-card></a-card>
 </template>
 
 <script lang="ts">
@@ -16,5 +16,3 @@ export default defineComponent({
 	},
 });
 </script>
-
-
