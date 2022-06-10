@@ -6,6 +6,6 @@
 
 <style lang="scss">
 #app {
-	background: gainsboro;
+	background: rgb(213, 213, 213);
 }
 </style>

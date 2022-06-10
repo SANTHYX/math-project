@@ -39,19 +39,7 @@
 								<a-divider>
 									<one-to-one-icon />&nbsp;{{ $t('Pass Points') }}
 								</a-divider>
-								<a-card>
-									<a-form layout="vertical">
-										<a-form-item :label="$t('Pass X')">
-											<a-input-number style="width: 100%" />
-										</a-form-item>
-										<a-form-item :label="$t('Pass Y')">
-											<a-input-number style="width: 100%" />
-										</a-form-item>
-										<a-button type="primary" block="100%">
-											<a-plus-icon />&nbsp;{{ $t('Insert') }}
-										</a-button>
-									</a-form>
-								</a-card>
+								<point-editor @insert="insertToArray($emit)" />
 							</a-col>
 							<a-col :span="10" offset="1">
 								<a-divider>
@@ -67,14 +55,42 @@
 						<a-line-chart-icon />
 						{{ $t('Generate Chart') }}
 					</template>
-					<div class="tab-content"></div>
+					<div class="tab-content">
+						<a-row justify="center">
+							<a-space direction="vertical" align="center">
+								<a-chart-icon />
+								<h1>{{ $t('Click To Generate Chart') }}</h1>
+								<a-button
+									type="danger"
+									shape="round"
+									@click="generateChart([])"
+								>
+									{{ $t('Generate Chart') }}
+								</a-button>
+							</a-space>
+						</a-row>
+					</div>
 				</a-tab-pane>
 				<a-tab-pane key="3">
 					<template #tab>
 						<a-excel-icon />
 						{{ $t('Create Report') }}
 					</template>
-					<div class="tab-content">HI</div>
+					<div class="tab-content">
+						<a-row justify="center">
+							<a-space direction="vertical" align="center">
+								<a-file-icon />
+								<h1>{{ $t('Click To Create Report') }}</h1>
+								<a-button
+									type="danger"
+									shape="round"
+									@click="generateChart([])"
+								>
+									{{ $t('Create Report') }}
+								</a-button>
+							</a-space>
+						</a-row>
+					</div>
 				</a-tab-pane>
 			</a-tabs>
 		</a-card>
@@ -94,6 +110,10 @@ import {
 	BorderBottomOutlined,
 } from '@ant-design/icons-vue';
 import Route from '@/types/route.type';
+import PointEditor from '@/components/PointEditor.vue';
+import Point from '@/types/point.type';
+import ChartIcon from '@/components/ChartIcon.vue';
+import FileIcon from '@/components/FileIcon.vue';
 
 export default defineComponent({
 	name: 'CalculatorPage',
@@ -106,10 +126,15 @@ export default defineComponent({
 		'a-excel-icon': FileExcelOutlined,
 		'one-to-one-icon': OneToOneOutlined,
 		'border-bottom-icon': BorderBottomOutlined,
+		'point-editor': PointEditor,
+		'a-chart-icon': ChartIcon,
+		'a-file-icon': FileIcon,
 	},
+	computed: {},
 	data: () => ({
 		activeKey: 1 as number,
 		result: 0 as number,
+		collection: [] as Point[],
 		subPages: [
 			{
 				key: 'aproximation',
@@ -123,6 +148,14 @@ export default defineComponent({
 			},
 		] as Route[],
 	}),
+	methods: {
+		insertToArray(point: unknown): void {
+			this.collection.push(point as Point);
+		},
+		generateChart(points: Point[]): void {
+			console.log(points);
+		},
+	},
 });
 </script>
 
@@ -152,6 +185,13 @@ export default defineComponent({
 
 	.tab-content {
 		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		#chart-icon {
+			font-size: 15px;
+		}
 	}
 }
 </style>
