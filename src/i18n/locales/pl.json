@@ -13,5 +13,11 @@
 	"Pass X": "Podaj X",
 	"Pass Y": "Podaj Y",
 	"Click To Create Report": "Kliknij By Stworzyć Raport",
-	"Click To Generate Chart": "Kliknij By Wygenerować Wykres"
+	"Click To Generate Chart": "Kliknij By Wygenerować Wykres",
+	"Edit Point": "Edytuj Punkt",
+	"Change Point X": "Zmien Punkt X",
+	"Change Point Y": "Zmien Punkt Y",
+	"Edit": "Edytuj",
+	"Interpolate": "Interpoluj",
+	"Aproximate": "Aproxymuj"
 }

@@ -13,5 +13,11 @@
 	"Pass X": "Pass X",
 	"Pass Y": "Pass Y",
 	"Click To Create Report": "Click To Create Report",
-	"Click To Generate Chart": "Click To Generate Chart"
+	"Click To Generate Chart": "Click To Generate Chart",
+	"Edit Point": "Edit Point",
+	"Change Point X": "Change X",
+	"Change Point Y": "Change Y",
+	"Edit": "Edit",
+	"Interpolate": "Interpolate",
+	"Aproximate": "Aproximate"
 }

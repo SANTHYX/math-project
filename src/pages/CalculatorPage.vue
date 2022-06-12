@@ -10,17 +10,21 @@
 				>
 					<a-left-arrow-icon />&nbsp;{{ $t('Back') }}
 				</a-button>
-				<a-space>
+				<a-space direction="horizontal" size="large">
 					<a-button
 						v-for="route in subPages"
 						:key="route.key"
 						type="primary"
 						shape="round"
+						@click="changeCalculationType(route.label)"
 					>
 						<component :is="route.iconComponent" />&nbsp;{{ $t(route.label) }}
 					</a-button>
 				</a-space>
 			</a-page-header>
+			<a-space v-if="showGraph">
+				<graph-viewer :inputPoints="getChartPoints" />
+			</a-space>
 		</a-layout-content>
 		<a-card class="card-container">
 			<a-tabs
@@ -39,56 +43,27 @@
 								<a-divider>
 									<one-to-one-icon />&nbsp;{{ $t('Pass Points') }}
 								</a-divider>
-								<point-editor @insert="insertToArray($emit)" />
+								<point-adder @insert="insertToArray" />
+								<a-button
+									type="primary"
+									size="large"
+									shape="round"
+									block="100%"
+									style="margin-top: 8rem"
+									@click="handleOperation"
+								>
+									{{ $t(getOperation) }}
+								</a-button>
 							</a-col>
 							<a-col :span="10" offset="1">
 								<a-divider>
 									<border-bottom-icon />&nbsp;{{ $t('Overview') }}
 								</a-divider>
-								<a-card> </a-card>
+								<point-editor
+									:points="inputPoints"
+									@editPoint="handleEditPoint"
+								/>
 							</a-col>
-						</a-row>
-					</div>
-				</a-tab-pane>
-				<a-tab-pane key="2">
-					<template #tab>
-						<a-line-chart-icon />
-						{{ $t('Generate Chart') }}
-					</template>
-					<div class="tab-content">
-						<a-row justify="center">
-							<a-space direction="vertical" align="center">
-								<a-chart-icon />
-								<h1>{{ $t('Click To Generate Chart') }}</h1>
-								<a-button
-									type="danger"
-									shape="round"
-									@click="generateChart([])"
-								>
-									{{ $t('Generate Chart') }}
-								</a-button>
-							</a-space>
-						</a-row>
-					</div>
-				</a-tab-pane>
-				<a-tab-pane key="3">
-					<template #tab>
-						<a-excel-icon />
-						{{ $t('Create Report') }}
-					</template>
-					<div class="tab-content">
-						<a-row justify="center">
-							<a-space direction="vertical" align="center">
-								<a-file-icon />
-								<h1>{{ $t('Click To Create Report') }}</h1>
-								<a-button
-									type="danger"
-									shape="round"
-									@click="generateChart([])"
-								>
-									{{ $t('Create Report') }}
-								</a-button>
-							</a-space>
 						</a-row>
 					</div>
 				</a-tab-pane>
@@ -110,10 +85,16 @@ import {
 	BorderBottomOutlined,
 } from '@ant-design/icons-vue';
 import Route from '@/types/route.type';
-import PointEditor from '@/components/PointEditor.vue';
+import PointAdder from '@/components/PointAdder.vue';
 import Point from '@/types/point.type';
 import ChartIcon from '@/components/ChartIcon.vue';
 import FileIcon from '@/components/FileIcon.vue';
+import CalculationOperationType from '@/types/enum/calculationOperationType.enum';
+import PointsEditor from '../components/PointsEditor.vue';
+import EditablePoint from '@/types/editablePoint.type';
+import interpolationService from '@/services/interpolation.service';
+import aproximationService from '@/services/aproximation.service';
+import GraphViewer from '@/components/GraphViewer.vue';
 
 export default defineComponent({
 	name: 'CalculatorPage',
@@ -126,15 +107,37 @@ export default defineComponent({
 		'a-excel-icon': FileExcelOutlined,
 		'one-to-one-icon': OneToOneOutlined,
 		'border-bottom-icon': BorderBottomOutlined,
-		'point-editor': PointEditor,
+		'point-adder': PointAdder,
 		'a-chart-icon': ChartIcon,
 		'a-file-icon': FileIcon,
+		'point-editor': PointsEditor,
+		GraphViewer,
 	},
-	computed: {},
+	computed: {
+		getOperation() {
+			return this.calculationType === CalculationOperationType.INTERPOLATION
+				? 'Interpolate'
+				: 'Aproximate';
+		},
+		getChartPoints() {
+			return this.inputPoints.map((points) => [points.point.x, points.point.y]);
+		},
+		disabledButtonRule() {
+			return (
+				this.inputPoints.length <= 2 ||
+				!this.inputPoints.some(
+					(editablePoint) => editablePoint.point.y === null
+				) ||
+				this.inputPoints
+			);
+		},
+	},
 	data: () => ({
 		activeKey: 1 as number,
 		result: 0 as number,
-		collection: [] as Point[],
+		calculationType: CalculationOperationType.INTERPOLATION,
+		inputPoints: [] as EditablePoint[],
+		outputPoints: [] as Point[],
 		subPages: [
 			{
 				key: 'aproximation',
@@ -147,13 +150,67 @@ export default defineComponent({
 				iconComponent: 'a-area-chart-icon',
 			},
 		] as Route[],
+		showGraph: false,
 	}),
 	methods: {
-		insertToArray(point: unknown): void {
-			this.collection.push(point as Point);
+		handleOperation() {
+			switch (this.calculationType) {
+				case CalculationOperationType.INTERPOLATION:
+					this.interpolate();
+					break;
+				default:
+					this.aproximate();
+					break;
+			}
 		},
-		generateChart(points: Point[]): void {
-			console.log(points);
+		interpolate(): void {
+			this.inputPoints
+				.sort((a, b) => a.point.x - b.point.x)
+				.forEach((_) => {
+					const localData = [...this.inputPoints.map((x) => x.point)];
+					const firstEmptyIndex = localData.findIndex(
+						(point) => point.y === null
+					);
+					const rangeBeforeNullValues = localData.splice(0, firstEmptyIndex);
+
+					const y = interpolationService
+						.interpolatePolynominal(
+							this.inputPoints[firstEmptyIndex].point.x,
+							rangeBeforeNullValues
+						)
+						.toPrecision(2);
+
+					this.inputPoints[firstEmptyIndex].point.y = Number.parseFloat(y);
+					this.showGraph = true;
+				});
+		},
+		aproximate(): void {
+			const points = this.inputPoints.map(
+				(editablePoint) => editablePoint.point
+			);
+			this.outputPoints = aproximationService.aproximatePolinomoinal(points);
+
+			console.log(this.outputPoints);
+		},
+		insertToArray(point: EditablePoint): void {
+			this.inputPoints.push(point as EditablePoint);
+		},
+		handleEditPoint(editedPoint: EditablePoint) {
+			const point = this.inputPoints.find(
+				(point) => point.key === editedPoint.key
+			);
+			point.point = editedPoint.point;
+		},
+		changeCalculationType(label: string): void {
+			this.clearState();
+			this.calculationType = Object.values(CalculationOperationType).find(
+				(type) => type === label.toUpperCase()
+			);
+		},
+		clearState(): void {
+			this.result = 0;
+			this.inputPoints = [];
+			this.outputPoints = [];
 		},
 	},
 });
