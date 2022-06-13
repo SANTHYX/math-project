@@ -14,15 +14,6 @@
 				>
 					<a-calculator-icon />&nbsp;{{ $t('Calculate') }}
 				</a-button>
-				<a-button
-					type="primary"
-					shape="round"
-					size="large"
-					class="btn"
-					@click="$router.push('/instruction')"
-				>
-					<a-info-icon />&nbsp;{{ $t('Instruction') }}
-				</a-button>
 			</a-space>
 		</a-row>
 	</a-layout>
@@ -37,7 +28,6 @@ export default defineComponent({
 	name: 'StartPage',
 	components: {
 		'a-calculator-icon': CalculatorOutlined,
-		'a-info-icon': InfoCircleOutlined,
 		Logo,
 	},
 });

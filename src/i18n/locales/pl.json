@@ -19,5 +19,8 @@
 	"Change Point Y": "Zmien Punkt Y",
 	"Edit": "Edytuj",
 	"Interpolate": "Interpoluj",
-	"Aproximate": "Aproxymuj"
+	"Aproximate": "Aproxymuj",
+	"Clear State": "Resetuj",
+	"Show Polynomial": "Wyświetl Wielomian",
+	"Calculate Errors": "Wylicz Błędy"
 }

@@ -24,7 +24,13 @@
 			<a-form-item :label="$t('Ustaw jako szukany punkt')">
 				<a-checkbox v-model:checked="isUnknown" />
 			</a-form-item>
-			<a-button type="danger" shape="round" block="100%" @click="onInsert">
+			<a-button
+				type="danger"
+				size="large"
+				shape="round"
+				block="100%"
+				@click="onInsert"
+			>
 				<a-plus-icon />&nbsp;{{ $t('Insert') }}
 			</a-button>
 		</a-form>

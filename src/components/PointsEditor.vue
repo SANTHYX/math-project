@@ -31,7 +31,13 @@
 					:min="0"
 				/>
 			</a-form-item>
-			<a-button type="danger" block="true" shape="round" @click="editPoint">
+			<a-button
+				type="danger"
+				size="large"
+				block="true"
+				shape="round"
+				@click="editPoint"
+			>
 				<a-edit-icon />&nbsp;{{ $t('Edit') }}
 			</a-button>
 		</a-form>

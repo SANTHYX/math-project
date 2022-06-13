@@ -19,5 +19,8 @@
 	"Change Point Y": "Change Y",
 	"Edit": "Edit",
 	"Interpolate": "Interpolate",
-	"Aproximate": "Aproximate"
+	"Aproximate": "Aproximate",
+	"Clear State": "Clear State",
+	"Show Polynomial": "Show Polynomial",
+	"Calculate Errors": "Calculate Errors"
 }

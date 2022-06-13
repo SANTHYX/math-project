@@ -13,14 +13,6 @@ const routes: Array<RouteRecordRaw> = [
 		component: StartPage,
 	},
 	{
-		path: '/instruction',
-		name: 'instructionPage',
-		component: () =>
-			import(
-				/* webpackChunkName: "instruction" */ '../pages/InstructionPage.vue'
-			),
-	},
-	{
 		path: '/calculator',
 		name: 'calculatorPage',
 		component: () =>

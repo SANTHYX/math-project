@@ -2,29 +2,21 @@
 	<a-layout>
 		<a-layout-content class="view">
 			<a-page-header class="header">
-				<a-button
-					type="primary"
-					class="back-button"
-					shape="round"
-					@click="$router.push('/')"
-				>
-					<a-left-arrow-icon />&nbsp;{{ $t('Back') }}
-				</a-button>
-				<a-space direction="horizontal" size="large">
-					<a-button
-						v-for="route in subPages"
-						:key="route.key"
-						type="primary"
-						shape="round"
-						@click="changeCalculationType(route.label)"
-					>
-						<component :is="route.iconComponent" />&nbsp;{{ $t(route.label) }}
+				<a-space align="flex-start">
+					<a-button type="primary" shape="round" @click="$router.push('/')">
+						<a-left-arrow-icon />
+						&nbsp;{{ $t('Back') }}
 					</a-button>
 				</a-space>
 			</a-page-header>
-			<a-space v-if="showGraph">
-				<graph-viewer :inputPoints="getChartPoints" />
-			</a-space>
+			<a-row justify="center" align="center">
+				<a-space direction="vertical" align="center">
+					<graph-viewer
+						:inputPoints="getChartInputPoints"
+						:outputPoints="getChartOutputPoints"
+					/>
+				</a-space>
+			</a-row>
 		</a-layout-content>
 		<a-card class="card-container">
 			<a-tabs
@@ -49,10 +41,55 @@
 									size="large"
 									shape="round"
 									block="100%"
-									style="margin-top: 8rem"
-									@click="handleOperation"
+									style="margin-top: 3rem"
+									:disabled="interpolationBolckRule"
+									@click="interpolate"
 								>
-									{{ $t(getOperation) }}
+									{{ $t('Interpolate') }}
+								</a-button>
+								<a-button
+									type="primary"
+									size="large"
+									shape="round"
+									block="100%"
+									style="margin-top: 1rem"
+									:disabled="aproximationBolckRule"
+									@click="aproximate"
+								>
+									{{ $t('Aproximate') }}
+								</a-button>
+								<a-button
+									type="danger"
+									size="large"
+									shape="round"
+									block="100%"
+									style="margin-top: 1rem"
+									:disabled="polynomialBlockRule"
+									@click="showPolynomialFunction"
+								>
+									{{ $t('Show Polynomial') }}
+								</a-button>
+								<a-button
+									type="danger"
+									size="large"
+									shape="round"
+									block="100%"
+									style="margin-top: 1rem"
+									:disabled="errorsBlockRule"
+									@click="calculateErrors"
+								>
+									{{ $t('Calculate Errors') }}
+								</a-button>
+								<a-button
+									type="danger"
+									size="large"
+									shape="round"
+									block="100%"
+									style="margin-top: 1rem"
+									@click="clearState"
+								>
+									<a-reset-icon />&nbsp;
+									{{ $t('Clear State') }}
 								</a-button>
 							</a-col>
 							<a-col :span="10" offset="1">
@@ -75,42 +112,34 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import {
-	DotChartOutlined,
-	AreaChartOutlined,
 	LeftSquareOutlined,
 	PlusCircleOutlined,
-	LineChartOutlined,
-	FileExcelOutlined,
 	OneToOneOutlined,
 	BorderBottomOutlined,
+	ClearOutlined,
 } from '@ant-design/icons-vue';
 import Route from '@/types/route.type';
 import PointAdder from '@/components/PointAdder.vue';
 import Point from '@/types/point.type';
-import ChartIcon from '@/components/ChartIcon.vue';
-import FileIcon from '@/components/FileIcon.vue';
+import MeanStatisticsError from '@/types/error.type';
 import CalculationOperationType from '@/types/enum/calculationOperationType.enum';
 import PointsEditor from '../components/PointsEditor.vue';
 import EditablePoint from '@/types/editablePoint.type';
 import interpolationService from '@/services/interpolation.service';
 import aproximationService from '@/services/aproximation.service';
 import GraphViewer from '@/components/GraphViewer.vue';
+import mathUtils from '@/utils/mathUtils.util';
 
 export default defineComponent({
 	name: 'CalculatorPage',
 	components: {
-		'a-dot-chart-icon': DotChartOutlined,
-		'a-area-chart-icon': AreaChartOutlined,
 		'a-left-arrow-icon': LeftSquareOutlined,
 		'a-plus-icon': PlusCircleOutlined,
-		'a-line-chart-icon': LineChartOutlined,
-		'a-excel-icon': FileExcelOutlined,
 		'one-to-one-icon': OneToOneOutlined,
 		'border-bottom-icon': BorderBottomOutlined,
 		'point-adder': PointAdder,
-		'a-chart-icon': ChartIcon,
-		'a-file-icon': FileIcon,
 		'point-editor': PointsEditor,
+		'a-reset-icon': ClearOutlined,
 		GraphViewer,
 	},
 	computed: {
@@ -119,17 +148,34 @@ export default defineComponent({
 				? 'Interpolate'
 				: 'Aproximate';
 		},
-		getChartPoints() {
+		getChartInputPoints() {
 			return this.inputPoints.map((points) => [points.point.x, points.point.y]);
 		},
-		disabledButtonRule() {
+		getChartOutputPoints() {
+			return this.aproximatedPoints.map((points) => [points.x, points.y]);
+		},
+		getInputPoints() {
+			return this.inputPoints.map((editable) => editable.point);
+		},
+		aproximationBolckRule() {
 			return (
-				this.inputPoints.length <= 2 ||
-				!this.inputPoints.some(
-					(editablePoint) => editablePoint.point.y === null
-				) ||
-				this.inputPoints
+				this.getInputPoints.some((obj) => !obj.y) ||
+				this.getInputPoints.length < 3
 			);
+		},
+		interpolationBolckRule() {
+			return (
+				this.getInputPoints.every((obj) => obj.y) ||
+				this.getInputPoints.length < 3
+			);
+		},
+		errorsBlockRule() {
+			return (
+				this.getInputPoints.length === 0 || this.aproximatedPoints.length === 0
+			);
+		},
+		polynomialBlockRule() {
+			return this.getInputPoints.length === 0;
 		},
 	},
 	data: () => ({
@@ -137,7 +183,13 @@ export default defineComponent({
 		result: 0 as number,
 		calculationType: CalculationOperationType.INTERPOLATION,
 		inputPoints: [] as EditablePoint[],
-		outputPoints: [] as Point[],
+		aproximatedPoints: [] as Point[],
+		polynomialFunctions: [] as string[],
+		errors: {
+			mse: 0 as number,
+			mae: 0 as number,
+			maxAe: 0 as number,
+		} as MeanStatisticsError,
 		subPages: [
 			{
 				key: 'aproximation',
@@ -150,47 +202,48 @@ export default defineComponent({
 				iconComponent: 'a-area-chart-icon',
 			},
 		] as Route[],
-		showGraph: false,
 	}),
 	methods: {
-		handleOperation() {
-			switch (this.calculationType) {
-				case CalculationOperationType.INTERPOLATION:
-					this.interpolate();
-					break;
-				default:
-					this.aproximate();
-					break;
-			}
-		},
 		interpolate(): void {
-			this.inputPoints
-				.sort((a, b) => a.point.x - b.point.x)
-				.forEach((_) => {
-					const localData = [...this.inputPoints.map((x) => x.point)];
-					const firstEmptyIndex = localData.findIndex(
-						(point) => point.y === null
-					);
-					const rangeBeforeNullValues = localData.splice(0, firstEmptyIndex);
-
-					const y = interpolationService
-						.interpolatePolynominal(
-							this.inputPoints[firstEmptyIndex].point.x,
-							rangeBeforeNullValues
-						)
-						.toPrecision(2);
-
-					this.inputPoints[firstEmptyIndex].point.y = Number.parseFloat(y);
-					this.showGraph = true;
+			this.inputPoints.forEach((_) => {
+				const localData = [...this.getInputPoints];
+				const firstEmptyIndex = localData.findIndex(
+					(point) => point.y === null
+				);
+				const rangeBeforeNullValues = localData.splice(0, firstEmptyIndex);
+				const y = interpolationService
+					.interpolatePolynominal(
+						this.inputPoints[firstEmptyIndex].point.x,
+						rangeBeforeNullValues
+					)
+					.toPrecision(2);
+				if (isNaN(Number.parseFloat(y))) {
+					this.$toast.error('Niewłaściwa Funkcja!', {
+						position: 'top-right',
+					});
+					throw new Error('Invalid Function');
+				}
+				const polynomial = interpolationService.getInterpolationPolynomial(
+					this.inputPoints[firstEmptyIndex].point.x,
+					rangeBeforeNullValues
+				);
+				this.addPolynomialFunctions(polynomial);
+				this.inputPoints[firstEmptyIndex].point.y = Number.parseFloat(y);
+				this.$toast.success('Wyliczono Pomyślnie', {
+					position: 'top-right',
 				});
+			});
 		},
 		aproximate(): void {
-			const points = this.inputPoints.map(
-				(editablePoint) => editablePoint.point
+			this.aproximatedPoints = aproximationService.aproximatePolinomoinal(
+				this.getInputPoints
 			);
-			this.outputPoints = aproximationService.aproximatePolinomoinal(points);
-
-			console.log(this.outputPoints);
+			this.polynomialFunctions = [];
+			this.polynomialFunctions.push(
+				aproximationService.findPolinominalAproximationFunction(
+					this.getInputPoints
+				)
+			);
 		},
 		insertToArray(point: EditablePoint): void {
 			this.inputPoints.push(point as EditablePoint);
@@ -207,10 +260,37 @@ export default defineComponent({
 				(type) => type === label.toUpperCase()
 			);
 		},
+		addPolynomialFunctions(polynomial: string): void {
+			this.polynomialFunctions.push(polynomial);
+		},
+		showPolynomialFunction() {
+			this.$toast.info(`Wielomian: ${this.polynomialFunctions}`, {
+				position: 'top-right',
+			});
+		},
+		calculateErrors(): void {
+			this.errors.mae = mathUtils.getMAE(
+				this.getInputPoints,
+				this.aproximatedPoints
+			);
+			this.errors.mse = mathUtils.getMSE(
+				this.getInputPoints,
+				this.aproximatedPoints
+			);
+			this.errors.maxAe = mathUtils.getMaxAE(
+				this.getInputPoints,
+				this.aproximatedPoints
+			);
+
+			this.$toast.info(
+				`Wyliczone błędy: MAE: ${this.errors.mae}, MSE: ${this.errors.mse}, maxAe: ${this.errors.maxAe}`
+			);
+		},
 		clearState(): void {
+			this.polynomialFunctions = [];
 			this.result = 0;
 			this.inputPoints = [];
-			this.outputPoints = [];
+			this.aproximatedPoints = [];
 		},
 	},
 });
