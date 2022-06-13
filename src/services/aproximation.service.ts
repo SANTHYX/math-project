@@ -4,7 +4,7 @@ import Point from '@/types/point.type';
 const aproximationService = {
 	aproximatePolinomoinal: (points: Point[]): Point[] => {
 		const dataPoints = points.map((point) => [point.x, point.y]) as DataPoint[];
-		const foundPoints = regression.linear(dataPoints).points;
+		const foundPoints = regression.polynomial(dataPoints).points;
 		return foundPoints.map((result) => {
 			return { x: result[0], y: result[1] } as Point;
 		});
